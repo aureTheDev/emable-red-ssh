@@ -62,7 +62,17 @@ echo "PS1='\[\e[1;31m\]\u@\h\[\e[0m\]:\[\e[1;34m\]\w\[\e[0m\]\$ '" >> ~/.bashrc
 handle_result $? "Update shell prompt"
 
 # Prompt user to add public key
-echo -e "${COLOR_GREEN}Please ensure to add the public key to the following locations:${COLOR_RESET}"
-echo "  1. /root/.ssh/authorized_keys - for the root user"
-echo "  2. ~/.ssh/authorized_keys - for the user: $LOGNAME"
-echo -e "${COLOR_GREEN}This ensures key-based authentication works properly.${COLOR_RESET}"
+echo -e "${COLOR_GREEN}Please paste your public key:${COLOR_RESET}"
+read -r PUBLIC_KEY
+
+# Add public key to root's authorized_keys
+mkdir -p /root/.ssh
+echo "$PUBLIC_KEY" >> /root/.ssh/authorized_keys
+handle_result $? "Add public key to /root/.ssh/authorized_keys"
+
+# Add public key to current user's authorized_keys
+mkdir -p ~/.ssh
+echo "$PUBLIC_KEY" >> ~/.ssh/authorized_keys
+handle_result $? "Add public key to ~/.ssh/authorized_keys"
+
+echo -e "${COLOR_GREEN}Public key has been added to the appropriate locations.${COLOR_RESET}"
